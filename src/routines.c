@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 11:06:46 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/10/26 00:07:40 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/10/29 16:45:34 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void eating_routine(t_args *philo_data)
 	//printf("%li %i has taken a fork\n", elapsed_time, philo_data->philo_id);
 	if(philo_data->shared->stop_program == NO)
 		printf(GREEN"%li %i is eating\n"RESET, elapsed_time, philo_data->philo_id);
+	philo_data->shared->print(philo_data->shared->is_dead);
 	usleep(philo_data->time_to_eat * 1000);
 }
 

@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 10:57:31 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/10/25 21:37:40 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/10/29 16:51:08 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,9 @@ void	init_shared(t_shared *shared, int num_philosophers) {
 
 	// Inizializza gli altri valori interi
 	shared->is_dead = 0;
-	shared->stop_program = 0;
-	shared->dead_philo = 0;
+	shared->stop_program = NO;
+	shared->dead_philo = NO;
+	shared->print = print_message;
 }
 
 void arg_data_init (t_args *data, t_shared *shared, char **argv)

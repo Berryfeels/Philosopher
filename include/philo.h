@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 16:13:44 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/10/26 00:02:32 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/10/29 17:00:18 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,10 @@
 typedef struct s_shared
 {
 	pthread_mutex_t fork[200];
-	int dead_philo;
-	int is_dead;
-	int stop_program;
+	int dead_philo;//id of dieing philo
+	int is_dead;//is there a dead phil0?
+	int stop_program;//stop the program yes or no?
+	void (*print)(struct s_shared *share);
 	pthread_mutex_t death_mutex;
 }		t_shared;
 
@@ -73,6 +74,7 @@ void ft_error_check(int argc, char **argv);
 
 //***Utils***//
 int	ft_atoi(char *digit);
+void print_message(t_shared *shared);
 
 //***Time checks***//
 long get_elapsed_time(long relation_time);
