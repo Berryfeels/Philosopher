@@ -6,7 +6,7 @@
 #    By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/09 15:58:42 by stdi-pum          #+#    #+#              #
-#    Updated: 2024/10/22 18:37:39 by stdi-pum         ###   ########.fr        #
+#    Updated: 2024/11/27 18:11:02 by stdi-pum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME  = philo
 
 # Compiler
 CC      = cc
-CFLAGS  = -g -Werror -Wextra -Wall -fsanitize=address
+CFLAGS  = -g -Werror -Wextra -Wall #-fsanitize=address
 # Includes
 INC         =   -I./include/ \
 

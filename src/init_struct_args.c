@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 10:57:31 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/10/29 16:51:08 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/11/26 23:11:56 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,48 +15,72 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-void	init_shared(t_shared *shared, int num_philosophers) {
-	int i;
+void	ft_destroy_mutexes(t_args *philo_data, t_shared *shared)
+{
+	int	i;
 
-	// Inizializza tutti i mutex dei fork
-	for (i = 0; i < num_philosophers; i++) {
-		if (pthread_mutex_init(&shared->fork[i], NULL) != 0) {
-			perror("Failed to initialize fork mutex");
-			exit(EXIT_FAILURE);
-		}
-	}
-
-	// Inizializza il mutex per `death_mutex`
-	if (pthread_mutex_init(&shared->death_mutex, NULL) != 0) {
-		perror("Failed to initialize death mutex");
-		exit(EXIT_FAILURE);
-	}
-
-	// Inizializza gli altri valori interi
-	shared->is_dead = 0;
-	shared->stop_program = NO;
-	shared->dead_philo = NO;
-	shared->print = print_message;
+	i = 0;
+	while (i < shared->n_philo)
+		pthread_mutex_destroy(&philo_data[i++].l_fork);
+	pthread_mutex_destroy(&shared->death);
+	pthread_mutex_destroy(&shared->stop);
+	pthread_mutex_destroy(&shared->print);
+	pthread_mutex_destroy(&shared->eating);
 }
 
-void arg_data_init (t_args *data, t_shared *shared, char **argv)
+static void	init_mutex(t_shared *shared)
 {
-	data->number_of_philosophers = ft_atoi(argv[1]);
-	if (data->number_of_philosophers < 2)
+	if (pthread_mutex_init(&shared->death, NULL) != 0) 
+	{
+		perror("Failed to initialize death");
+		exit(EXIT_FAILURE);
+	}
+	if (pthread_mutex_init(&shared->print, NULL) != 0) 
+	{
+		perror("Failed to initialize print");
+		exit(EXIT_FAILURE);
+	}
+	if (pthread_mutex_init(&shared->stop, NULL) != 0) 
+	{
+		perror("Failed to initialize stop");
+		exit(EXIT_FAILURE);
+	}
+	if (pthread_mutex_init(&shared->eating, NULL) != 0) 
+	{
+		perror("Failed to initialize eating_times");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void	init_shared(t_shared *shared)
+{
+	init_mutex(shared);
+	shared->is_dead = NO;
+	shared->stop_program = NO;
+	shared->dead_philo = NO;
+	shared->stop_printing = NO;
+	shared->ntime_eating = 0;
+	shared->a_round = 1;
+}
+
+void	arg_data_init(t_args *data, t_shared *shared, char **argv)
+{
+	shared->n_philo = ft_atoi(argv[1]);
+	if (shared->n_philo < 2)
 		ft_exit_error(EXIT_ERROR_TOO_FEW_PHILOSOPHERS);
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
+	data -> can_i_eat = YES;
+	data->p_round = 1;
 	if (argv[5])
-		data->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
+		shared->boundmeals = ft_atoi(argv[5]);
 	else 
-		data->number_of_times_each_philosopher_must_eat = 0;
+		shared->boundmeals = 0;
 	data->start_time = get_time();
 	data->previous_eat_time = data -> start_time;
-	printf("Time at start is:%ld\n", (long)data->start_time);
 	data->philo_id = 0;
-	data->fork_left = 0;
-	data->fork_right = 0;
 	data->shared = shared;
-	init_shared(shared, data->number_of_philosophers);
+	data->r_fork = NULL;
+	init_shared(shared);
 }

@@ -6,77 +6,117 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 15:24:35 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/10/26 00:02:19 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/11/27 00:39:31 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-static void ft_destroy_mutexes(t_args *data)
+int	ft_join_threads(pthread_t *philo, t_args *philo_data, pthread_t death)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(i < data->number_of_philosophers)
-	{
-		pthread_mutex_destroy(&data->shared->fork[i++]);
-	}
-	pthread_mutex_destroy(&data->shared->death_mutex);
-}
-
-int	ft_join_threads(pthread_t *philo, t_args *data)
-{
-	int	i = 0;
-	while (i < data->number_of_philosophers)
+	while (i < philo_data->shared->n_philo)
 	{
 		if (pthread_join(philo[i], NULL) != 0)
-			ft_exit_error(EXIT_ERROR_THREAD); // Error check
+			ft_exit_error(EXIT_ERROR_THREAD);
 		i++;
 	}
-	
+	if (pthread_join(death, NULL) != 0)
+	{
+		free(philo);
+		ft_exit_error(EXIT_ERROR_THREAD);
+	}
 	return (0);
 }
 
-static void ft_create_threads(t_args *philo_data, pthread_t *philo)
+static int	create_threads(t_args *philo_d, t_shared *shared)
 {
-	if (philo_data->number_of_philosophers % 2)
-	{
-		if (pthread_create(philo, NULL, routine_odd, (void *)philo_data) != 0)
-			ft_exit_error(EXIT_ERROR_THREAD);
-	}
-	if (!(philo_data->number_of_philosophers % 2))
-	{
-		if (pthread_create(philo, NULL, routine_even, (void *)philo_data) != 0)
-			ft_exit_error(EXIT_ERROR_THREAD);
-	}
+	int			i;
+	pthread_t	death;
+	pthread_t	*philo;
 
-	printf("Philli[%i] was created\n", philo_data->philo_id);
-}
-
-void	ft_threads(t_args *data)
-{
-	pthread_t philo[data->number_of_philosophers];
-	pthread_t death_supervisor;
-	t_args *philo_data;
-	int i;
-
-	if (pthread_create(&death_supervisor, NULL, supervising, (void *)data->shared) != 0)
-		exit(EXIT_ERROR_THREAD);
+	philo = malloc(sizeof(pthread_t) * shared->n_philo);
+	if (!philo)
+		exit (EXIT_FAILURE);
 	i = 0;
-	while (i < data->number_of_philosophers)
+	if (pthread_create(&death, NULL, checker, (void *)shared) != 0)
+		return (NO);
+	while (i < shared->n_philo) 
 	{
-		philo_data = (t_args *)malloc(sizeof(t_args));
-		if (!philo_data)
-			break;
-		data->philo_id = i + 1;
-		*philo_data = *data;
-		ft_create_threads(philo_data, &philo[i]);
-		
+		if (pthread_create(&philo[i], NULL, routine, (void *)&philo_d[i]) != 0) 
+		{
+			while (--i >= 0) 
+				pthread_mutex_destroy(&philo_d[i].l_fork);
+			return (NO);
+		}
 		i++;
 	}
-	ft_join_threads(philo, data);
-	if (pthread_join(death_supervisor, NULL) != 0)
-			ft_exit_error(EXIT_ERROR_THREAD);
-	ft_destroy_mutexes(data);
-	
+	ft_join_threads(philo, philo_d, death);
+	free(philo);
+	return (YES);
+}
+
+static int	init_forks(t_args *philo_data)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo_data->shared->n_philo) 
+	{
+		if (pthread_mutex_init(&philo_data[i].l_fork, NULL) != 0) 
+		{
+			perror("Failed to initialize l_fork mutex");
+			while (--i >= 0)
+				pthread_mutex_destroy(&philo_data[i].l_fork);
+			return (NO);
+		}
+		i++;
+	}
+	i = 0;
+	while (i < philo_data->shared->n_philo) 
+	{
+		if (i + 1 == philo_data->shared->n_philo)
+			philo_data[i].r_fork = &philo_data[0].l_fork;
+		else
+			philo_data[i].r_fork = &philo_data[i + 1].l_fork;
+		i++;
+	}
+	return (YES);
+}
+
+static void	init_philo(t_args *data, t_args *philo_data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->shared->n_philo)
+	{
+		philo_data[i] = *data;
+		philo_data[i].philo_id = i + 1;
+		i++;
+	}
+}
+
+void	ft_threads(t_args *data, t_shared *shared)
+{
+	t_args	*philo_data;
+
+	philo_data = malloc(sizeof(t_args) * shared->n_philo);
+	if (!philo_data)
+		return ;
+	init_philo(data, philo_data);
+	if (init_forks(philo_data) == NO) 
+	{
+		free(philo_data);
+		return ;
+	}
+	if (create_threads(philo_data, shared) == NO) 
+	{
+		perror("fail creating threads");
+		return ;
+	}
+	ft_destroy_mutexes(philo_data, shared);
+	free(philo_data);
 }
