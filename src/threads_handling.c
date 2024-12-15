@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 15:24:35 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/11/27 00:39:31 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/12/15 20:16:26 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ static int	create_threads(t_args *philo_d, t_shared *shared)
 	int			i;
 	pthread_t	death;
 	pthread_t	*philo;
-
-	philo = malloc(sizeof(pthread_t) * shared->n_philo);
+	
+	shared->philos = malloc(sizeof(pthread_t) * shared->n_philo);
+	philo = shared->philos;
 	if (!philo)
 		exit (EXIT_FAILURE);
 	i = 0;

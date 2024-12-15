@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 10:57:31 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/11/26 23:11:56 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/12/15 21:13:14 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,20 @@ void	init_shared(t_shared *shared)
 	shared->dead_philo = NO;
 	shared->stop_printing = NO;
 	shared->ntime_eating = 0;
-	shared->a_round = 1;
+	shared->a_round = 0;
+	shared->philos = NULL;
 }
 
 void	arg_data_init(t_args *data, t_shared *shared, char **argv)
 {
-	shared->n_philo = ft_atoi(argv[1]);
-	if (shared->n_philo < 2)
-		ft_exit_error(EXIT_ERROR_TOO_FEW_PHILOSOPHERS);
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
+	shared->n_philo = ft_atoi(argv[1]);
+	if (shared->n_philo == 1)
+		print_one_death(data, shared);
 	data -> can_i_eat = YES;
-	data->p_round = 1;
+	data->p_round = 0;
 	if (argv[5])
 		shared->boundmeals = ft_atoi(argv[5]);
 	else 

@@ -6,7 +6,7 @@
 #    By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/09 15:58:42 by stdi-pum          #+#    #+#              #
-#    Updated: 2024/11/27 18:11:02 by stdi-pum         ###   ########.fr        #
+#    Updated: 2024/12/15 15:59:42 by stdi-pum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,26 +31,16 @@ OBJ_PATH = src/obj/
 
 # sets the folders for .o files mimiking the src path
 OBJS = $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))
-#OBJS = $(addprefix $(OBJ_PATH), $(SRC:.c=.o))
 
-# Rule to create object directories
+# Create the object directories if they don't exist
 $(OBJ_PATH):
 	@echo "Creating object directories..."
-	@mkdir -p	$(OBJ_PATH)
-
-# Object files
-OBJS = $(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o, $(SRC))
-
-
-# Rules
-all: $(NAME)
-
+	@mkdir -p $(OBJ_PATH)
+	
 # Create .o files
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c | $(OBJ_PATH)
-	@mkdir -p $(dir $@)
 	@echo "Compiling $< to $@"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(INC)
-
 
 # Build executable
 $(NAME): $(OBJS)
@@ -61,13 +51,16 @@ $(NAME): $(OBJS)
 # Clean object files
 clean:
 	@echo "Removing .o object files..."
-	$(RM)  $(OBJS)
+	$(RM) $(OBJS)
 
 # Clean everything including executables
 fclean: clean
 	@echo "Removing executables and libraries..."
 	$(RM) $(NAME)
 	@rm -rf $(OBJ_PATH)
+
+# Rules
+all: $(NAME)
 
 # Rebuild everything
 re: fclean all
