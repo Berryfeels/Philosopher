@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 16:13:44 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/12/15 20:15:12 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:30:28 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 # define DEATH 5
 # define FORK 6
 //****************/*STRUCTURES*/********************//
-
+struct s_args;
 //***Program arg struct***//
 typedef struct s_shared
 {
@@ -52,14 +52,13 @@ typedef struct s_shared
 	pthread_mutex_t	stop;
 	pthread_mutex_t	death;
 	pthread_mutex_t	eating;
-	pthread_t		*philos;
+	struct s_args	*philo_data;
 	int				n_philo;
 	int				dead_philo;
 	int				is_dead;
 	int				stop_program;
 	int				stop_printing;
 	int				ntime_eating;
-	int				a_round;
 	int				boundmeals;
 
 }		t_shared;
@@ -75,8 +74,9 @@ typedef struct s_args
 	int				philo_id;
 	long			start_time;
 	long			previous_eat_time;
-	int				p_round;
 	int				can_i_eat;
+	int 			meals;
+	int				dead;
 	t_shared		*shared;
 }				t_args;
 
@@ -95,17 +95,17 @@ void	print_one_death(t_args *data, t_shared *shared);
 long	get_elapsed_time(long relation_time);
 int		stop_program_check(t_args *philo_data);
 long	get_time(void);
-void	*checker(void *shared);
+//void	*checker(void *shared);
 int		dead_check(t_args *philo_data);
-long	get_elapsed_supper_time(t_args *data);
-void	check_if_i_can_eat(t_args *philo_data);
-
+//long	get_elapsed_supper_time(t_args *data);
+//void	check_if_i_can_eat(t_args *philo_data);
+int	check_termination(t_shared *shared);
 //***Struct initialization***//
 void	arg_data_init(t_args *data, t_shared *shared, char **argv);
 void	ft_destroy_mutexes(t_args *philo_data, t_shared *shared);
 
 //***Thread management***//
-int		ft_join_threads(pthread_t *philo, t_args *philo_data, pthread_t death);
+int		ft_join_threads(pthread_t *philo, t_args *philo_data);//, pthread_t death);
 void	ft_threads(t_args *data, t_shared *shared);
 
 //***Routines***//

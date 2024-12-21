@@ -6,13 +6,13 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 15:24:35 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/12/15 20:16:26 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:31:45 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-int	ft_join_threads(pthread_t *philo, t_args *philo_data, pthread_t death)
+int	ft_join_threads(pthread_t *philo, t_args *philo_data)//, pthread_t death)
 {
 	int	i;
 
@@ -23,38 +23,37 @@ int	ft_join_threads(pthread_t *philo, t_args *philo_data, pthread_t death)
 			ft_exit_error(EXIT_ERROR_THREAD);
 		i++;
 	}
-	if (pthread_join(death, NULL) != 0)
-	{
-		free(philo);
-		ft_exit_error(EXIT_ERROR_THREAD);
-	}
+	// if (pthread_join(death, NULL) != 0)
+	// {
+	// 	free(philo);
+	// 	ft_exit_error(EXIT_ERROR_THREAD);
+	// }
 	return (0);
 }
 
-static int	create_threads(t_args *philo_d, t_shared *shared)
+static int	create_threads(t_args *philo_data, t_shared *shared)
 {
 	int			i;
-	pthread_t	death;
+	//pthread_t	death;
 	pthread_t	*philo;
 	
-	shared->philos = malloc(sizeof(pthread_t) * shared->n_philo);
-	philo = shared->philos;
+	philo = malloc(sizeof(pthread_t) * shared->n_philo);
 	if (!philo)
 		exit (EXIT_FAILURE);
 	i = 0;
-	if (pthread_create(&death, NULL, checker, (void *)shared) != 0)
-		return (NO);
+	//if (pthread_create(&death, NULL, checker, (void *)shared) != 0)
+	//	return (NO);
 	while (i < shared->n_philo) 
 	{
-		if (pthread_create(&philo[i], NULL, routine, (void *)&philo_d[i]) != 0) 
+		if (pthread_create(&philo[i], NULL, routine, (void *)&philo_data[i]) != 0) 
 		{
 			while (--i >= 0) 
-				pthread_mutex_destroy(&philo_d[i].l_fork);
+				pthread_mutex_destroy(&philo_data[i].l_fork);
 			return (NO);
 		}
 		i++;
 	}
-	ft_join_threads(philo, philo_d, death);
+	ft_join_threads(philo, philo_data);//, death);
 	free(philo);
 	return (YES);
 }
@@ -102,22 +101,24 @@ static void	init_philo(t_args *data, t_args *philo_data)
 
 void	ft_threads(t_args *data, t_shared *shared)
 {
-	t_args	*philo_data;
+	t_args	*philo;
 
-	philo_data = malloc(sizeof(t_args) * shared->n_philo);
-	if (!philo_data)
+	philo = malloc(sizeof(t_args) * shared->n_philo);
+	if (!philo)
 		return ;
-	init_philo(data, philo_data);
-	if (init_forks(philo_data) == NO) 
+	shared->philo_data = philo;
+	init_philo(data, philo);
+	if (init_forks(philo) == NO) 
 	{
-		free(philo_data);
+		free(philo);
 		return ;
 	}
-	if (create_threads(philo_data, shared) == NO) 
+	if (create_threads(philo, shared) == NO) 
 	{
 		perror("fail creating threads");
+		free(philo);
 		return ;
 	}
-	ft_destroy_mutexes(philo_data, shared);
-	free(philo_data);
+	ft_destroy_mutexes(philo, shared);
+	free(philo);
 }

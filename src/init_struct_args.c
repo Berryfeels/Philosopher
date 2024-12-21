@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 10:57:31 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/12/15 21:13:14 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/12/21 17:41:09 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static void	init_mutex(t_shared *shared)
 	}
 }
 
-void	init_shared(t_shared *shared)
+void	init_shared(t_shared *shared, t_args *data)
 {
 	init_mutex(shared);
 	shared->is_dead = NO;
@@ -60,8 +60,7 @@ void	init_shared(t_shared *shared)
 	shared->dead_philo = NO;
 	shared->stop_printing = NO;
 	shared->ntime_eating = 0;
-	shared->a_round = 0;
-	shared->philos = NULL;
+	shared->philo_data = data;
 }
 
 void	arg_data_init(t_args *data, t_shared *shared, char **argv)
@@ -73,15 +72,16 @@ void	arg_data_init(t_args *data, t_shared *shared, char **argv)
 	if (shared->n_philo == 1)
 		print_one_death(data, shared);
 	data -> can_i_eat = YES;
-	data->p_round = 0;
 	if (argv[5])
 		shared->boundmeals = ft_atoi(argv[5]);
 	else 
-		shared->boundmeals = 0;
+		shared->boundmeals = -1;
+	data->meals = shared->boundmeals;
 	data->start_time = get_time();
 	data->previous_eat_time = data -> start_time;
 	data->philo_id = 0;
 	data->shared = shared;
 	data->r_fork = NULL;
-	init_shared(shared);
+	data->dead = NO;
+	init_shared(shared, data);
 }

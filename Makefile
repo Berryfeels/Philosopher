@@ -6,15 +6,15 @@
 #    By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/09 15:58:42 by stdi-pum          #+#    #+#              #
-#    Updated: 2024/12/15 15:59:42 by stdi-pum         ###   ########.fr        #
+#    Updated: 2024/12/21 17:13:19 by stdi-pum         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME  = philo
 
 # Compiler
-CC      = cc
-CFLAGS  = -g -Werror -Wextra -Wall #-fsanitize=address
+CC      = gcc
+CFLAGS  = -g -O0 -o -Werror -Wextra -Wall -lpthread #-fsanitize=thread
 # Includes
 INC         =   -I./include/ \
 

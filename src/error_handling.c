@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 10:58:22 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/12/04 13:49:01 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:48:33 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	print_one_death(t_args *data, t_shared *t_shared)
 {
+	usleep(data->time_to_die * 1000);
 	printf("%i 1 ", data->time_to_die);
 	printf(RED"died\n"RESET);
 	free(data);

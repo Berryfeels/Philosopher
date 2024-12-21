@@ -6,7 +6,7 @@
 /*   By: stdi-pum <stdi-pum@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 10:58:22 by stdi-pum          #+#    #+#             */
-/*   Updated: 2024/12/04 13:48:56 by stdi-pum         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:51:22 by stdi-pum         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,13 @@ void	print_message(t_args *philo_data, int n)
 void	death_message(t_args *philo_data)
 {
 	long	elapsed_time;
-
+	pthread_mutex_lock (&philo_data->shared->print);
 	if (philo_data->shared->stop_printing == NO)
 	{
 		elapsed_time = get_elapsed_time(philo_data-> start_time);
 		printf("%li %i ", elapsed_time, philo_data->philo_id);
 		printf(RED"died\n"RESET);
-		philo_data->shared->stop_printing = YES;
+		//philo_data->shared->stop_printing = YES;
 	}
+	pthread_mutex_unlock (&philo_data->shared->print);
 }
-//printf("Overall meals: %i\n", philo_data->shared->ntime_eating);
