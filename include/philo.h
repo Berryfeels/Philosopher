@@ -44,7 +44,8 @@
 # define DEATH 5
 # define FORK 6
 //****************/*STRUCTURES*/********************//
-struct s_args;
+struct	s_args;
+
 //***Program arg struct***//
 typedef struct s_shared
 {
@@ -54,13 +55,10 @@ typedef struct s_shared
 	pthread_mutex_t	eating;
 	struct s_args	*philo_data;
 	int				n_philo;
-	int				dead_philo;
 	int				is_dead;
 	int				stop_program;
 	int				stop_printing;
-	int				ntime_eating;
-	int				boundmeals;
-
+	int				turn;
 }		t_shared;
 
 //***Single philo struct***//
@@ -74,9 +72,11 @@ typedef struct s_args
 	int				philo_id;
 	long			start_time;
 	long			previous_eat_time;
-	int				can_i_eat;
-	int 			meals;
+	int				set_position;
+	int				position;
+	int				meals;
 	int				dead;
+	int				stop;
 	t_shared		*shared;
 }				t_args;
 
@@ -93,23 +93,24 @@ void	print_one_death(t_args *data, t_shared *shared);
 
 //***Time checks***//
 long	get_elapsed_time(long relation_time);
-int		stop_program_check(t_args *philo_data);
 long	get_time(void);
-//void	*checker(void *shared);
 int		dead_check(t_args *philo_data);
-//long	get_elapsed_supper_time(t_args *data);
-//void	check_if_i_can_eat(t_args *philo_data);
-int	check_termination(t_shared *shared);
+int		check_if_i_can_eat(t_args *philo_data);
+int		check_termination(t_args *philo_data);
+
 //***Struct initialization***//
 void	arg_data_init(t_args *data, t_shared *shared, char **argv);
 void	ft_destroy_mutexes(t_args *philo_data, t_shared *shared);
 
 //***Thread management***//
-int		ft_join_threads(pthread_t *philo, t_args *philo_data);//, pthread_t death);
+int		ft_join_threads(pthread_t *philo, t_args *philo_data);
 void	ft_threads(t_args *data, t_shared *shared);
 
 //***Routines***//
 void	*routine(void *arg);
 void	ft_routine_time(t_args *philo_data, long routine_time);
+void	exit_delay(t_args *philo_data);
+void	set_turn(t_args *philo_data);
+void	set_position(t_args *philo_data);
 
 #endif
