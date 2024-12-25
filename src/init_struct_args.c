@@ -30,22 +30,22 @@ void	ft_destroy_mutexes(t_args *philo_data, t_shared *shared)
 
 static void	init_mutex(t_shared *shared)
 {
-	if (pthread_mutex_init(&shared->death, NULL) != 0) 
+	if (pthread_mutex_init(&shared->death, NULL) != 0)
 	{
 		perror("Failed to initialize death");
 		exit(EXIT_FAILURE);
 	}
-	if (pthread_mutex_init(&shared->print, NULL) != 0) 
+	if (pthread_mutex_init(&shared->print, NULL) != 0)
 	{
 		perror("Failed to initialize print");
 		exit(EXIT_FAILURE);
 	}
-	if (pthread_mutex_init(&shared->stop, NULL) != 0) 
+	if (pthread_mutex_init(&shared->stop, NULL) != 0)
 	{
 		perror("Failed to initialize stop");
 		exit(EXIT_FAILURE);
 	}
-	if (pthread_mutex_init(&shared->eating, NULL) != 0) 
+	if (pthread_mutex_init(&shared->eating, NULL) != 0)
 	{
 		perror("Failed to initialize eating_times");
 		exit(EXIT_FAILURE);
@@ -55,11 +55,10 @@ static void	init_mutex(t_shared *shared)
 void	init_shared(t_shared *shared, t_args *data)
 {
 	init_mutex(shared);
-	shared->is_dead = NO;
-	shared->stop_program = NO;
-	shared->dead_philo = NO;
+	shared->is_dead = 0;
+	shared->stop_program = 0;
 	shared->stop_printing = NO;
-	shared->ntime_eating = 0;
+	shared->turn = shared->n_philo;
 	shared->philo_data = data;
 }
 
@@ -71,17 +70,18 @@ void	arg_data_init(t_args *data, t_shared *shared, char **argv)
 	shared->n_philo = ft_atoi(argv[1]);
 	if (shared->n_philo == 1)
 		print_one_death(data, shared);
-	data -> can_i_eat = YES;
 	if (argv[5])
-		shared->boundmeals = ft_atoi(argv[5]);
-	else 
-		shared->boundmeals = -1;
-	data->meals = shared->boundmeals;
+		data->meals = ft_atoi(argv[5]);
+	else
+		data->meals = -1;
 	data->start_time = get_time();
 	data->previous_eat_time = data -> start_time;
 	data->philo_id = 0;
 	data->shared = shared;
+	data -> set_position = YES;
+	data ->position = 1;
 	data->r_fork = NULL;
 	data->dead = NO;
+	data->stop = NO;
 	init_shared(shared, data);
 }

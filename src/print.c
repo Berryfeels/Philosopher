@@ -38,13 +38,14 @@ void	print_message(t_args *philo_data, int n)
 void	death_message(t_args *philo_data)
 {
 	long	elapsed_time;
+
 	pthread_mutex_lock (&philo_data->shared->print);
 	if (philo_data->shared->stop_printing == NO)
 	{
 		elapsed_time = get_elapsed_time(philo_data-> start_time);
 		printf("%li %i ", elapsed_time, philo_data->philo_id);
 		printf(RED"died\n"RESET);
-		//philo_data->shared->stop_printing = YES;
+		philo_data->shared->stop_printing = YES;
 	}
 	pthread_mutex_unlock (&philo_data->shared->print);
 }

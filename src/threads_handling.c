@@ -23,37 +23,29 @@ int	ft_join_threads(pthread_t *philo, t_args *philo_data)//, pthread_t death)
 			ft_exit_error(EXIT_ERROR_THREAD);
 		i++;
 	}
-	// if (pthread_join(death, NULL) != 0)
-	// {
-	// 	free(philo);
-	// 	ft_exit_error(EXIT_ERROR_THREAD);
-	// }
 	return (0);
 }
 
 static int	create_threads(t_args *philo_data, t_shared *shared)
 {
 	int			i;
-	//pthread_t	death;
 	pthread_t	*philo;
-	
+
 	philo = malloc(sizeof(pthread_t) * shared->n_philo);
 	if (!philo)
 		exit (EXIT_FAILURE);
 	i = 0;
-	//if (pthread_create(&death, NULL, checker, (void *)shared) != 0)
-	//	return (NO);
-	while (i < shared->n_philo) 
+	while (i < shared->n_philo)
 	{
-		if (pthread_create(&philo[i], NULL, routine, (void *)&philo_data[i]) != 0) 
+		if (pthread_create(&philo[i], NULL, routine, (void *)&philo_data[i]) != 0)
 		{
-			while (--i >= 0) 
+			while (--i >= 0)
 				pthread_mutex_destroy(&philo_data[i].l_fork);
 			return (NO);
 		}
 		i++;
 	}
-	ft_join_threads(philo, philo_data);//, death);
+	ft_join_threads(philo, philo_data);
 	free(philo);
 	return (YES);
 }
@@ -63,9 +55,9 @@ static int	init_forks(t_args *philo_data)
 	int	i;
 
 	i = 0;
-	while (i < philo_data->shared->n_philo) 
+	while (i < philo_data->shared->n_philo)
 	{
-		if (pthread_mutex_init(&philo_data[i].l_fork, NULL) != 0) 
+		if (pthread_mutex_init(&philo_data[i].l_fork, NULL) != 0)
 		{
 			perror("Failed to initialize l_fork mutex");
 			while (--i >= 0)
@@ -75,7 +67,7 @@ static int	init_forks(t_args *philo_data)
 		i++;
 	}
 	i = 0;
-	while (i < philo_data->shared->n_philo) 
+	while (i < philo_data->shared->n_philo)
 	{
 		if (i + 1 == philo_data->shared->n_philo)
 			philo_data[i].r_fork = &philo_data[0].l_fork;
@@ -108,12 +100,12 @@ void	ft_threads(t_args *data, t_shared *shared)
 		return ;
 	shared->philo_data = philo;
 	init_philo(data, philo);
-	if (init_forks(philo) == NO) 
+	if (init_forks(philo) == NO)
 	{
 		free(philo);
 		return ;
 	}
-	if (create_threads(philo, shared) == NO) 
+	if (create_threads(philo, shared) == NO)
 	{
 		perror("fail creating threads");
 		free(philo);

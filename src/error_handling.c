@@ -14,8 +14,8 @@
 
 void	print_one_death(t_args *data, t_shared *t_shared)
 {
-	usleep(data->time_to_die * 1000);
-	printf("%i 1 ", data->time_to_die);
+	usleep((data->time_to_die + 1) * 1000);
+	printf("%i 1 ", data->time_to_die + 1);
 	printf(RED"died\n"RESET);
 	free(data);
 	free(t_shared);
@@ -25,7 +25,7 @@ void	print_one_death(t_args *data, t_shared *t_shared)
 void	ft_exit_error(int error_type)
 {
 	if (error_type == EXIT_ERROR_ARGS)
-		printf("args must be 4 or 5, != 0\n");
+		printf("args must be 4 or 5, != 0 and only numbers\n");
 	if (error_type == EXIT_ERROR_THREAD)
 		printf("Thread initialization issue\n");
 	if (error_type == EXIT_ERROR_TOO_FEW_PHILOSOPHERS)

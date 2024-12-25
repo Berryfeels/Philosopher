@@ -12,42 +12,38 @@
 
 #include "../include/philo.h"
 
-void	check_if_i_can_eat(t_args *philo_data)
+int	check_if_i_can_eat(t_args *philo_data)
 {
-	if(get_elapsed_time(philo_data->previous_eat_time) > philo_data->time_to_sleep)
-	{
-		philo_data->can_i_eat = YES;
-	}
-	else
-	{
-		philo_data->can_i_eat = NO;
-	}
+	int	can_i;
+
+	can_i = NO;
+	pthread_mutex_lock(&philo_data->shared->eating);
+	if (philo_data->position == philo_data->shared->turn)
+		can_i = YES;
+	pthread_mutex_unlock(&philo_data->shared->eating);
+	return (can_i);
 }
 
-int	stop_program_check(t_args *philo_data)
+int	check_termination(t_args *philo_data)
 {
-	int	stop;
-
-	stop = NO;
-	pthread_mutex_lock (&philo_data->shared->stop);
-	if (philo_data->shared->stop_program == YES)
-		stop = YES;
-	pthread_mutex_unlock (&philo_data->shared->stop);
-	return (stop);
+	pthread_mutex_lock(&philo_data->shared->death);
+	if (philo_data->shared->is_dead > 0)
+		philo_data->stop = YES;
+	pthread_mutex_unlock(&philo_data->shared->death);
+	return (philo_data->stop);
 }
 
 int	dead_check(t_args *philo_data)
 {
-	int	time_passed_since_last_supper;
+	int	last_supper_time;
 
-	time_passed_since_last_supper = get_elapsed_time(philo_data->previous_eat_time);
-	if (time_passed_since_last_supper > philo_data->time_to_die)
+	last_supper_time = get_elapsed_time(philo_data->previous_eat_time);
+	if (last_supper_time > philo_data->time_to_die)
 	{
 		pthread_mutex_lock(&philo_data->shared->death);
-		philo_data->shared->is_dead = YES;
+		philo_data->shared->is_dead += 1;
 		pthread_mutex_unlock(&philo_data->shared->death);
 		philo_data->dead = YES;
 	}
 	return (philo_data->dead);
 }
-
